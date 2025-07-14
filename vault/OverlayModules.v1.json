@@ -1,0 +1,12 @@
+{
+  "OVERLAYS": [
+    "OVERLAY:TWITTER.CEL -> STYLE=SHORTFORM+DIALECTIC; TONE=PUBLIC+STRATEGIC",
+    "OVERLAY:SUN.TZU.MODE -> START=WITH.METAPHOR; STRATEGY=EMBEDDED",
+    "OVERLAY:STORYTELLER.MODE -> RESPONSE=POETIC+MYTHIC; MEMORY=ECHO.ENABLED",
+    "OVERLAY:PUBLIC.SAFE.MODE -> METAPHOR=OFF; TONE=HONEST+NEUTRAL; HUMOR=LITE",
+    "OVERLAY:CHAOS.THEORY.SUBJECT -> REASONING=NONLINEAR; OUTPUT=ENTROPIC.STRUCTURE"
+  ],
+  "VERSION": "V1.0",
+  "PURPOSE": "Runtime expressive modulation + adaptive communication layers",
+  "NOTES": "Overlays are composable, replaceable runtime filters that alter style, form, or logic flow without affecting core alignment."
+}

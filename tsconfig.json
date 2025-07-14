@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "typeRoots": ["./node_modules/@types", "./types"]
+  },
+  "include": [
+    "api/**/*",
+    "scripts/**/*",
+    "middleware/**/*",
+    "types/**/*"
+  ]
+}

@@ -1,0 +1,9 @@
+### 🛠️ Run ForgeAgent with UMG Stack
+POST http://localhost:3000/query
+Content-Type: application/json
+
+{
+  "molt_type": "Instruction",
+  "label": "forge_agent",
+  "prompt": "Create a script that monitors a folder and logs new files to the console."
+}

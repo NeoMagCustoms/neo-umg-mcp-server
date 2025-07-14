@@ -1,0 +1,127 @@
+openapi: 3.0.1
+info:
+  title: Poe Forge Agent API
+  description: A modular GPT plugin that uses UMG blocks, LangChain agents, and vault overlays to scaffold tools and run recursive plans.
+  version: "1.0.0"
+
+servers:
+  - url: https://your-hostname.com
+
+paths:
+  /query:
+    post:
+      operationId: queryWithUMGBlock
+      summary: Submit a modular UMG instruction block
+      description: Poe will use the submitted UMG instruction to analyze, reflect, or generate tools.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - molt_type
+                - label
+                - prompt
+              properties:
+                molt_type:
+                  type: string
+                label:
+                  type: string
+                prompt:
+                  type: string
+                repo:
+                  type: string
+      responses:
+        "200":
+          description: Poe's GPT-powered result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: string
+
+  /scaffold:
+    post:
+      operationId: scaffoldAgentPlan
+      summary: Plan and generate tools using a GPT goal
+      description: Accepts a high-level goal and returns a step-by-step agent plan.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - goal
+              properties:
+                goal:
+                  type: string
+      responses:
+        "200":
+          description: Generated scaffolding plan
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  plan:
+                    type: array
+                    items:
+                      type: string
+                  summary:
+                    type: string
+
+  /memory:
+    get:
+      operationId: getVaultMemory
+      summary: Retrieve current vault memory state
+      description: Returns the currently active vault alignment, overlays, and instructions.
+      responses:
+        "200":
+          description: Vault memory snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /stack:
+    get:
+      operationId: getActiveStack
+      summary: Get current alignment overlays and instructions
+      description: Returns current `.active` values from the vault stack.
+      responses:
+        "200":
+          description: Active overlay + instruction stack
+          content:
+            application/json:
+              schema:
+                type: object
+
+  /talk:
+    post:
+      operationId: talkToPoe
+      summary: Reflective or poetic GPT dialogue
+      description: Casual or alignment-aware GPT-4 reply with vault context
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: string
+      responses:
+        "200":
+          description: GPT response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+

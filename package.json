@@ -1,0 +1,50 @@
+{
+  "name": "neo-umg-mcp-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "check-deploy": "ts-node scripts/deploySanityCheck.ts",
+    "dev": "ts-node api/server.ts",
+    "edit-vault": "ts-node scripts/vaultEditorCLI.ts",
+    "fix-vault": "ts-node scripts/vaultFixer.ts",
+    "generate": "ts-node scripts/blockGenerator.ts",
+    "inject": "ts-node scripts/contextInjectorCLI.ts",
+    "memory": "ts-node scripts/memoryCLI.ts",
+    "orchestrate": "ts-node scripts/runOrchestrator.ts",
+    "plan": "ts-node scripts/agentPlannerCLI.ts",
+    "prompt": "ts-node scripts/promptCLI.ts",
+    "reflect": "ts-node scripts/reflectCLI.ts",
+    "run-queue": "ts-node scripts/taskQueueRunner.ts",
+    "scaffold": "ts-node scripts/scaffoldCLI.ts",
+    "scan": "ts-node scripts/scanRepoCLI.ts",
+    "sleeve": "ts-node scripts/sleeveCLI.ts",
+    "snapshot": "ts-node scripts/snapshotVault.ts",
+    "stack": "ts-node scripts/stackDisplayCLI.ts",
+    "start": "node dist/server.js",
+    "status": "ts-node scripts/statusCLI.ts",
+    "swap": "ts-node scripts/swapCLI.ts",
+    "test-server": "ts-node test-server.ts",
+    "tools": "ts-node scripts/toolRegistryCLI.ts",
+    "upload": "ts-node scripts/uploadCLI.ts"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "chalk": "^4.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.5.1",
+    "inquirer": "^9.2.7",
+    "langchain": "^0.1.16",
+    "openai": "^4.29.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.21",
+    "@types/express-rate-limit": "^5.1.3",
+    "@types/inquirer": "^9.0.8",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.0"
+  }
+}

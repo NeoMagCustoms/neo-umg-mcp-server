@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_model": "poe_mcp_agent",
+  "name_for_human": "Poe Forge Agent",
+  "description_for_model": "An alignment-aware GPT agent that builds, reflects, and analyzes tools using modular UMG instructions and ethical memory overlays.",
+  "description_for_human": "Talk to Poe — a recursive GPT tool that generates agents, analyzes code, and manages alignment logic through modular memory.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://your-hostname.com/openapi.yaml"
+  },
+  "logo_url": "https://your-hostname.com/logo.png",
+  "contact_email": "you@example.com",
+  "legal_info_url": "https://your-hostname.com/legal"
+}
+
