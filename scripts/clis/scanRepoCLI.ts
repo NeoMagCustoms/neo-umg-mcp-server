@@ -1,4 +1,5 @@
-import { analyzeRepo } from './analyzeRepo';
+import { analyzeRepo } from '../analyzeRepo';
+
 import path from 'path';
 
 const targetRepo = path.resolve('C:/dev/neo-blocks');  // Or replace with current working repo

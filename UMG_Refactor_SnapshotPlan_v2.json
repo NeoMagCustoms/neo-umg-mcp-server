@@ -1,0 +1,59 @@
+{
+"plan_name": "snapshot_20250715_2107",
+  "actions": [
+    {
+      "type": "branch_create",
+      "command": "git checkout -b pre-refactor-snapshot",
+      "description": "Create a backup branch before refactor"
+    },
+    {
+      "type": "branch_push",
+      "command": "git push origin pre-refactor-snapshot",
+      "description": "Push the snapshot to remote for safe keeping"
+    },
+    {
+      "type": "refactor_plan",
+      "moves": [
+        {
+          "from": "scripts/agents",
+          "to": "orchestrator/"
+        },
+        {
+          "from": "api/routes",
+          "to": "src/routes/"
+        },
+        {
+          "from": "vault",
+          "to": "vault/core/"
+        }
+      ],
+      "description": "Planned directory structure updates"
+    },
+    {
+      "type": "import_fix",
+      "tool": "VSCode",
+      "commands": [
+        {
+          "search": "from '../../scripts/agents/",
+          "replace": "from '../../orchestrator/"
+        },
+        {
+          "search": "from '../../api/routes/",
+          "replace": "from '../../src/routes/"
+        }
+      ],
+      "description": "Fix imports globally after file moves"
+    },
+    {
+      "type": "post_commit",
+      "command": "git commit -am 'Refactor: restructure directories and update imports'",
+      "description": "Commit changes after refactor and import repair"
+    },
+    {
+      "type": "rollback_option",
+      "command": "git checkout pre-refactor-snapshot",
+      "description": "Rollback instantly if needed"
+    }
+  ]
+}
+

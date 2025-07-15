@@ -1,20 +1,17 @@
-// scripts/runOrchestrator.ts
 import fs from 'fs';
 import path from 'path';
 import { forgeAgent } from './forgeAgent';
-import { loadVault } from './vaultLoader'; // ✅ updated path
+import { loadVault } from '../../utils/loadVault';
 
 type AgentStep = {
   label: string;
   prompt: (goal: string) => string;
 };
 
-// 🔐 Load vault data (mythos, alignment)
 const vault = loadVault();
 const mythos = vault?.MythosBlock?.MYTHOS?.PURPOSE || 'Build aligned modular agents';
 const alignment = vault?.AlignmentBlock?.cantocore?.PHILOSOPHY || [];
 
-// 🧱 Modular plan with prompts
 const agentPlan: AgentStep[] = [
   {
     label: 'plannerAgent',
@@ -38,7 +35,6 @@ const agentPlan: AgentStep[] = [
   }
 ];
 
-// 🛠️ Core orchestrator function
 export async function runOrchestrator(goal: string, silent = false) {
   const sanitized = goal.replace(/\s+/g, '_');
   const planDir = path.join(__dirname, '..', 'plans');

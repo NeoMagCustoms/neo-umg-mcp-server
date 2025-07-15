@@ -1,4 +1,3 @@
-// api/routes/query.ts
 import { Router, Request, Response } from 'express';
 import { alignmentCheckMiddleware } from '../../middleware/alignmentCheckMiddleware';
 import { vaultLoaderMiddleware } from '../../middleware/vaultLoaderMiddleware';
@@ -51,7 +50,7 @@ router.post(
       }
 
       if (block.label === "forge_agent" && block.prompt) {
-        const { forgeAgent } = await import('../../scripts/forgeAgent');
+        const { forgeAgent } = await import('../../scripts/agents/forgeAgent');
         const toolName = block.label_to_create || "newTool";
         const result = await forgeAgent(toolName, block.prompt);
         return res.json(safeOutput({
@@ -79,3 +78,4 @@ router.post(
 );
 
 export default router;
+
