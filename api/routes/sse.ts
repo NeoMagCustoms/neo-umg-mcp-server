@@ -1,11 +1,9 @@
+// api/routes/sse.ts
 import express from 'express';
 
 const sseRouter = express.Router();
 
-/**
- * ✅ Static MCP Manifest
- */
-sseRouter.get('/sse', (req, res) => {
+sseRouter.get('/sse', (_req, res) => {
   res.json({
     tools: [
       {
@@ -26,20 +24,6 @@ sseRouter.get('/sse', (req, res) => {
       }
     ]
   });
-});
-
-/**
- * 🪞 Optional test stream
- */
-sseRouter.get('/sse/stream', (_req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
-
-  res.write(`data: MirrorAgent stream online.\n\n`);
-  res.write(`data: Active blocks: AlignmentBlock.v1, InstructionLayer.v1\n\n`);
-  res.write(`data: [DONE]\n\n`);
-  res.end();
 });
 
 export default sseRouter;

@@ -2,49 +2,19 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import path from 'path';
-import fs from 'fs';
 
-import { logMiddleware } from '../middleware/logMiddleware';
-import { rateLimitMiddleware } from '../middleware/rateLimitMiddleware';
-
-import memoryRoute from './routes/memory';
-import stackRoute from './routes/stack';
-import talkRoute from './routes/talk';
-import scaffoldRoute from './routes/scaffold';
-import queryRoute from './routes/query';
-// import analyzeRoute from './routes/analyze'; // 🆕 (disabled for now)
-import sseRouter from './routes/sse'; // ✅ FIXED: default import
-
-dotenv.config();
+import sseRoute from './routes/sse'; // ✅ Make sure this path matches your folder
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+dotenv.config();
 
-// 🌐 CORS Config — Safe for plugins & frontends
-app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'x-api-key']
-}));
-
-// 🧠 Core Middleware
+app.use(cors());
 app.use(express.json());
-app.use(logMiddleware);
-app.use(rateLimitMiddleware);
 
-// ✅ Tool + Memory Routes
-app.use('/memory', memoryRoute);
-app.use('/stack', stackRoute);
-app.use('/talk', talkRoute);
-app.use('/scaffold', scaffoldRoute);
-app.use('/query', queryRoute);
-// app.use('/analyze', analyzeRoute); // optional future route
+// ✅ Mount public /sse route BEFORE auth guard
+app.use('/', sseRoute);
 
-// ✅ MCP manifest route (must come BEFORE API key middleware)
-app.use('/', sseRouter);
-
-// 🔐 Optional API key lock
+// 🔐 Optional x-api-key middleware
 app.use((req, res, next) => {
   const key = req.headers['x-api-key'];
   if (process.env.API_KEY && key !== process.env.API_KEY) {
@@ -53,27 +23,13 @@ app.use((req, res, next) => {
   next();
 });
 
-// 🔌 Plugin File Serving — ai-plugin.json, logo.png, openapi.yaml
-const staticPath = path.join(__dirname, '..', '..');
-
-app.get('/.well-known/ai-plugin.json', (_req, res) => {
-  res.sendFile(path.join(staticPath, '.well-known', 'ai-plugin.json'));
+// ✅ Optional: fallback route
+app.get('/', (req, res) => {
+  res.send('🧠 Neo UMG MCP is live');
 });
 
-app.get('/openapi.yaml', (_req, res) => {
-  res.sendFile(path.join(staticPath, 'openapi.yaml'));
-});
-
-app.get('/logo.png', (_req, res) => {
-  res.sendFile(path.join(staticPath, 'logo.png'));
-});
-
-// 🚀 Launch Server
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`🧠 Neo UMG MCP Server running at http://localhost:${PORT}`);
-});
-
-app.get('/', (req, res) => {
-  res.send('🧠 Neo UMG MCP Server is live.');
 });
 
