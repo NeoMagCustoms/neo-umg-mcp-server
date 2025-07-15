@@ -68,3 +68,7 @@ app.get('/logo.png', (_req, res) => {
 app.listen(PORT, () => {
   console.log(`🧠 Neo UMG MCP Server running at http://localhost:${PORT}`);
 });
+
+app.get('/', (req, res) => {
+  res.send('🧠 Neo UMG MCP Server is live.');
+});
