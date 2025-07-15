@@ -14,7 +14,7 @@ import talkRoute from './routes/talk';
 import scaffoldRoute from './routes/scaffold';
 import queryRoute from './routes/query';
 // import analyzeRoute from './routes/analyze'; // 🆕 (disabled for now)
-import { sseRouter } from './routes/sse'; // ✅ NEW: MCP manifest support
+import sseRouter from './routes/sse'; // ✅ FIXED: default import
 
 dotenv.config();
 
@@ -23,7 +23,7 @@ const PORT = process.env.PORT || 3000;
 
 // 🌐 CORS Config — Safe for plugins & frontends
 app.use(cors({
-  origin: '*', // Replace with your domain(s) in production
+  origin: '*',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type', 'x-api-key']
 }));
@@ -41,7 +41,7 @@ app.use('/scaffold', scaffoldRoute);
 app.use('/query', queryRoute);
 // app.use('/analyze', analyzeRoute); // optional future route
 
-// ✅ NEW: Register /sse and /sse/stream
+// ✅ MCP manifest route (must come BEFORE API key middleware)
 app.use('/', sseRouter);
 
 // 🔐 Optional API key lock
@@ -76,3 +76,4 @@ app.listen(PORT, () => {
 app.get('/', (req, res) => {
   res.send('🧠 Neo UMG MCP Server is live.');
 });
+
