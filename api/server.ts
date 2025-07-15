@@ -1,20 +1,22 @@
-// api/server.ts
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-import sseRoute from './routes/sse'; // ✅ Make sure this path matches your folder
+import sseRoute from './routes/sse'; // ✅ Existing static plugin manifest
+import mcpRoute from './routes/mcp'; // ✅ NEW: MCP tools endpoints
 
 const app = express();
 dotenv.config();
 
+// ✅ Basic middleware
 app.use(cors());
 app.use(express.json());
 
-// ✅ Mount public /sse route BEFORE auth guard
+// ✅ Public MCP & SSE routes BEFORE auth
 app.use('/', sseRoute);
+app.use('/', mcpRoute);
 
-// 🔐 Optional x-api-key middleware
+// 🔐 Optional: x-api-key check
 app.use((req, res, next) => {
   const key = req.headers['x-api-key'];
   if (process.env.API_KEY && key !== process.env.API_KEY) {
@@ -23,7 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Optional: fallback route
+// ✅ Default fallback route
 app.get('/', (req, res) => {
   res.send('🧠 Neo UMG MCP is live');
 });
