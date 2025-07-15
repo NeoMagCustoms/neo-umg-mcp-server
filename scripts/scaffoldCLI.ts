@@ -2,8 +2,10 @@
 import axios from 'axios';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const API_URL = 'http://localhost:3000/scaffold';
+const API_URL = 'http://localhost:10000/scaffold';
 
 async function run() {
   console.log(chalk.greenBright('\n🧱 UMG Scaffold CLI\n'));
@@ -17,10 +19,18 @@ async function run() {
   ]);
 
   try {
-    const response = await axios.post(API_URL, {
-      goal,
-      mode: 'auto' // triggers plan + run
-    });
+    const response = await axios.post(
+      API_URL,
+      {
+        goal,
+        mode: 'auto'
+      },
+      {
+        headers: {
+          'x-api-key': process.env.API_KEY || ''
+        }
+      }
+    );
 
     const { plan, summary, results, status } = response.data;
 
@@ -54,4 +64,3 @@ async function run() {
 }
 
 run();
-
