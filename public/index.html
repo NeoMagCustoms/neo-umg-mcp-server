@@ -5,11 +5,14 @@
   <title>UMG MCP Console</title>
 </head>
 <body>
-  <h1>UMG MCP Console</h1>
+  <h2>UMG MCP Console</h2>
+
+  <p>Paste a valid UMG JSON block:</p>
   <textarea id="payload" rows="10" cols="80">
 {
-  "goal": "Analyze the neo-umg-mcp-server repo, especially ./scripts, ./api, and ./vault. Suggest improvements to tooling, organization, or GPT agent structure.",
-  "mode": "auto"
+  "label": "analyze_repo",
+  "repo": "./scripts",
+  "molt_type": "Instruction"
 }
   </textarea>
   <br>
