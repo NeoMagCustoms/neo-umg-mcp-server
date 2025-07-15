@@ -5,7 +5,7 @@ import chalk from 'chalk';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const API_URL = 'http://localhost:10000/scaffold';
+const API_URL = 'http://localhost:3000/scaffold';
 
 async function run() {
   console.log(chalk.greenBright('\n🧱 UMG Scaffold CLI\n'));

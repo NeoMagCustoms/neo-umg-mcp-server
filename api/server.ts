@@ -4,19 +4,20 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import path from 'path';
 
-import sseRoute from './routes/sse';  // ✅ Plugin manifest/static
-import mcpRoute from './routes/mcp';  // ✅ Plugin endpoints
+import sseRoute from './routes/sse';   // Plugin manifest/static
+import mcpRoute from './routes/mcp';   // Custom MCP plugin endpoint
+import scaffoldRoute from './routes/scaffold'; // ✅ REAL /scaffold route
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 3000;
 
 // ✅ Middleware
 app.use(cors());
 app.use(express.json());
 
-// ✅ Serve static UI (e.g., public/index.html)
+// ✅ Serve public UI (index.html)
 const staticDir = path.join(__dirname, '..', 'public');
 app.use(express.static(staticDir));
 
@@ -24,11 +25,12 @@ app.get('/', (_req, res) => {
   res.sendFile(path.join(staticDir, 'index.html'));
 });
 
-// ✅ Plugin and MCP endpoints
+// ✅ Plugin + route endpoints
+app.use('/scaffold', scaffoldRoute); // 🔥 FIXED: now scaffold route is connected
 app.use('/', sseRoute);
 app.use('/', mcpRoute);
 
-// 🔐 Optional API Key enforcement
+// 🔐 Optional API Key check
 app.use((req, res, next) => {
   const key = req.headers['x-api-key'];
   if (process.env.API_KEY && key !== process.env.API_KEY) {
@@ -37,7 +39,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ✅ Final fallback route (shouldn't trigger unless misrouted)
+// 🧠 Final fallback
 app.use((_req, res) => {
   res.status(404).send('🧠 UMG MCP route not found.');
 });
