@@ -1,15 +1,15 @@
-# render.yaml
 services:
   - type: web
     name: neo-umg-mcp
     env: node
     plan: free
     buildCommand: npm install
-    startCommand: npm run dev
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: OPENAI_API_KEY
-        sync: false # Set in Render dashboard
+        sync: false
       - key: API_KEY
-        sync: false # Optional: add if you're using x-api-key auth
+        sync: false
+
