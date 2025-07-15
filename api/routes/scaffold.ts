@@ -1,12 +1,11 @@
-// api/routes/scaffold.ts
 import { Router } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { ChatOpenAI } from 'langchain/chat_models/openai';
 import { HumanMessage } from 'langchain/schema';
-import { forgeAgent } from '../../scripts/forgeAgent';
+
 import { analyzeRepo } from '../../scripts/analyzeRepo';
-import { runPlan } from '../../scripts/orchestratorCore';
+import { runPlan } from '../../scripts/agents/orchestratorCore'; // ✅ Corrected here
 import { alignmentCheckMiddleware } from '../../middleware/alignmentCheckMiddleware';
 import { vaultLoaderMiddleware } from '../../middleware/vaultLoaderMiddleware';
 
@@ -31,7 +30,9 @@ const buildPlanFromGoal = async (goal: string) => {
   const result = await llm.call([new HumanMessage(prompt)]);
 
   try {
-    return JSON.parse(result.text); // Expecting array
+    const parsed = JSON.parse(result.text);
+    if (!Array.isArray(parsed)) throw new Error("Parsed plan is not an array.");
+    return parsed;
   } catch {
     return [
       { label: 'plannerAgent', prompt: `Plan how to accomplish: ${goal}` },
@@ -49,8 +50,6 @@ router.post(
   vaultLoaderMiddleware,
   async (req, res) => {
     const { goal, plan, analyzeRepo: doAnalyze, path: repoPath = './', mode = 'review' } = req.body;
-
-    // ✅ PATCHED: Type-safe override for vault access
     const vault = (req as any).vault || {};
 
     let finalPlan = plan;
@@ -84,7 +83,7 @@ router.post(
       res.json({
         mode: 'review',
         plan: finalPlan,
-        alignmentOverlay: vault?.OverlayModules?.active,
+        alignmentOverlay: vault?.OverlayModules?.active || 'none',
         philosophy: vault?.AlignmentBlock?.cantocore?.PHILOSOPHY || [],
         status: '✅ Plan saved. Use `npm run orchestrate` to execute.'
       });
@@ -97,3 +96,4 @@ router.post(
 );
 
 export default router;
+

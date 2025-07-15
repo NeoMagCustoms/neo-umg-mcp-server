@@ -1,14 +1,26 @@
-# Node
+# ─── Node ─────────────────────────────
 node_modules/
 dist/
 *.log
 
-# Env
+# ─── Environment ─────────────────────
 .env
+.env.*
+!.env.example  # Allow template
 
-# Build Artifacts
+# ─── Build Artifacts ─────────────────
 *.tsbuildinfo
+*.cache
 
-# IDE settings (optional)
+# ─── Vault Protection (Optional) ─────
+vault/*.secret.json
+vault/Agents.v1.json
+
+# ─── Editor/IDE ──────────────────────
 .vscode/
+.idea/
+
+# ─── OS-Specific ─────────────────────
+.DS_Store
+Thumbs.db
 
