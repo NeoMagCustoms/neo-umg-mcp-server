@@ -8,6 +8,14 @@ import fs from 'fs';
 import { logMiddleware } from '../middleware/logMiddleware';
 import { rateLimitMiddleware } from '../middleware/rateLimitMiddleware';
 
+import memoryRoute from './routes/memory';
+import stackRoute from './routes/stack';
+import talkRoute from './routes/talk';
+import scaffoldRoute from './routes/scaffold';
+import queryRoute from './routes/query';
+// import analyzeRoute from './routes/analyze'; // 🆕 (disabled for now)
+import { sseRouter } from './routes/sse'; // ✅ NEW: MCP manifest support
+
 dotenv.config();
 
 const app = express();
@@ -25,20 +33,16 @@ app.use(express.json());
 app.use(logMiddleware);
 app.use(rateLimitMiddleware);
 
-// ✅ Route Imports
-import memoryRoute from './routes/memory';
-import stackRoute from './routes/stack';
-import talkRoute from './routes/talk';
-import scaffoldRoute from './routes/scaffold';
-import queryRoute from './routes/query';
-// import analyzeRoute from './routes/analyze'; // 🆕 (disabled for now)
-
+// ✅ Tool + Memory Routes
 app.use('/memory', memoryRoute);
 app.use('/stack', stackRoute);
 app.use('/talk', talkRoute);
 app.use('/scaffold', scaffoldRoute);
 app.use('/query', queryRoute);
-// app.use('/analyze', analyzeRoute); // 🆕 (disabled for now)
+// app.use('/analyze', analyzeRoute); // optional future route
+
+// ✅ NEW: Register /sse and /sse/stream
+app.use('/', sseRouter);
 
 // 🔐 Optional API key lock
 app.use((req, res, next) => {
