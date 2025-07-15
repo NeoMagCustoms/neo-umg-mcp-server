@@ -1,10 +1,11 @@
 {
   "name": "neo-umg-mcp-server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "api/server.ts",
   "scripts": {
     "check-deploy": "ts-node scripts/deploySanityCheck.ts",
     "dev": "ts-node api/server.ts",
+    "start": "ts-node api/server.ts",
     "edit-vault": "ts-node scripts/vaultEditorCLI.ts",
     "fix-vault": "ts-node scripts/vaultFixer.ts",
     "generate": "ts-node scripts/blockGenerator.ts",
@@ -20,7 +21,6 @@
     "sleeve": "ts-node scripts/sleeveCLI.ts",
     "snapshot": "ts-node scripts/snapshotVault.ts",
     "stack": "ts-node scripts/stackDisplayCLI.ts",
-    "start": "node dist/server.js",
     "status": "ts-node scripts/statusCLI.ts",
     "swap": "ts-node scripts/swapCLI.ts",
     "test-server": "ts-node test-server.ts",
