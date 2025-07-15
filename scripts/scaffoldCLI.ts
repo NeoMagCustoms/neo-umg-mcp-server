@@ -17,13 +17,39 @@ async function run() {
   ]);
 
   try {
-    const response = await axios.post(API_URL, { goal });
-    const files: string[] = response.data?.files || [];
+    const response = await axios.post(API_URL, {
+      goal,
+      mode: 'auto' // triggers plan + run
+    });
 
-    console.log(chalk.cyan('\n✅ Scaffold Complete:'));
-    files.forEach((file: string) => console.log('📁', file));
+    const { plan, summary, results, status } = response.data;
+
+    if (plan) {
+      console.log(chalk.cyan('\n📦 Plan:'));
+      plan.forEach((step: any, i: number) => {
+        console.log(`${i + 1}. ${chalk.yellow(step.label)} — ${step.prompt}`);
+      });
+    }
+
+    if (summary) {
+      console.log(chalk.greenBright('\n🧠 Summary:'));
+      console.log(summary);
+    }
+
+    if (results) {
+      console.log(chalk.magenta('\n🔁 Agent Execution Results:'));
+      console.log(JSON.stringify(results, null, 2));
+    }
+
+    if (status) {
+      console.log(chalk.cyan('\n✅ Status:'), status);
+    }
+
   } catch (err: any) {
-    console.error(chalk.red('❌ Scaffold failed:'), err.message);
+    console.error(chalk.red('\n❌ Scaffold failed:'), err.message || err);
+    if (err.response?.data) {
+      console.error(chalk.red('↪ Response:'), JSON.stringify(err.response.data, null, 2));
+    }
   }
 }
 
