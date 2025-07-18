@@ -3,15 +3,10 @@ dotenv.config();
 
 import fs from 'fs';
 import path from 'path';
-import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { HumanMessage } from 'langchain/schema';
+import { OpenAI } from 'openai';
 import { safeOutput } from '../../utils/safeOutput';
 
-const llm = new ChatOpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY!,
-  temperature: 0.6,
-  modelName: 'gpt-4'
-});
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 const BANNED_LABELS = ['delete', 'exec', 'rm', 'kill', 'wipe', 'reboot', 'shutdown', 'format'];
 
@@ -32,24 +27,39 @@ export async function forgeAgent(label: string, prompt: string): Promise<any> {
       }
     }
 
-    const result = await llm.call([new HumanMessage(prompt)]);
+    const chat = await openai.chat.completions.create({
+      model: 'gpt-4',
+      temperature: 0.5,
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a code generator. Only return raw code with no explanation.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ]
+    });
+
+    const content = chat.choices?.[0]?.message?.content || '// No content returned.';
     const fileName = `${label}.ts`;
     const filePath = path.join(__dirname, fileName);
-    fs.writeFileSync(filePath, result.text);
+    fs.writeFileSync(filePath, content);
 
     const registryPath = path.join(__dirname, '..', '..', 'vault', 'Agents.v1.json');
     let registry: { agents: AgentMetadata[]; active: string[] } = { agents: [], active: [] };
 
-    try {
-      if (fs.existsSync(registryPath)) {
+    if (fs.existsSync(registryPath)) {
+      try {
         const existing = fs.readFileSync(registryPath, 'utf-8');
         registry = JSON.parse(existing);
+      } catch {
+        console.warn('⚠️ Could not read agent registry. Reinitializing.');
       }
-    } catch {
-      console.warn('⚠️ Could not read agent registry. Reinitializing.');
     }
 
-    const alignmentPath = path.join(__dirname, '..', '..', 'vault', 'AlignmentBlock.v1.json');
+    const alignmentPath = path.join(__dirname, '..', '..', 'vault', 'blocks', 'AlignmentBlock.v1.json');
     let alignment: string[] = [];
 
     try {
@@ -64,7 +74,7 @@ export async function forgeAgent(label: string, prompt: string): Promise<any> {
       label,
       file: fileName,
       created_at: new Date().toISOString(),
-      summary: result.text.slice(0, 180),
+      summary: content.slice(0, 180),
       alignment_snapshot: alignment
     };
 
