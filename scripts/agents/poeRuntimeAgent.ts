@@ -1,8 +1,5 @@
 // scripts/poeRuntimeAgent.ts
 
-
-
-
 import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
@@ -15,8 +12,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!
 });
 
-const agentsPath = path.join(__dirname);
-
 const actions = {
   scaffold: () => execSync('npm run scaffold', { stdio: 'inherit' }),
   reflect: () => execSync('npm run reflect-agent', { stdio: 'inherit' }),
@@ -25,7 +20,11 @@ const actions = {
   organize: () => execSync('ts-node scripts/repoOrganizerAgent.ts', { stdio: 'inherit' })
 };
 
-async function decideAction(goal: string): Promise<{ action: string; file?: string }> {
+async function decideAction(goal: string): Promise<{
+  action: string;
+  file?: string;
+  content?: string;
+}> {
   const prompt = injectContextPrompt(goal);
 
   const chat = await openai.chat.completions.create({
@@ -34,13 +33,16 @@ async function decideAction(goal: string): Promise<{ action: string; file?: stri
     messages: [
       {
         role: 'system',
-        content: `You are Poe, an intelligent recursive agent controller.
-You manage tools that can reflect on agents, scaffold new ones, clean code, push changes, or reorganize the system.
-Given a goal, reply in JSON ONLY:
-{ "action": "scaffold" | "reflect" | "clean" | "push" | "organize", "file": "optional.ts" }
+        content: `You are Poe, a recursive AI assistant who can use tools or simply respond.
 
-Only choose one action. If you're unsure, prefer "reflect".
-Don't explain yourself.`
+Respond with a JSON object ONLY:
+{
+  "action": "scaffold" | "reflect" | "clean" | "push" | "organize" | "chat",
+  "file"?: "optional.ts",
+  "content"?: "Reply message if action is 'chat'"
+}
+
+Prefer tools when possible, but use "chat" if the request is exploratory or doesn't match a tool.`
       },
       { role: 'user', content: prompt }
     ]
@@ -65,7 +67,18 @@ async function main() {
   ]);
 
   const decision = await decideAction(input);
-  console.log(chalk.blue(`\n🧠 Poe decided: ${decision.action}${decision.file ? ' → ' + decision.file : ''}`));
+
+  if (decision.action === 'chat') {
+    console.log(chalk.cyan('\n🧠 Poe replies:\n'));
+    console.log(chalk.gray(decision.content || '[No response provided]'));
+    return;
+  }
+
+  console.log(
+    chalk.blue(
+      `\n🧠 Poe decided: ${decision.action}${decision.file ? ' → ' + decision.file : ''}`
+    )
+  );
 
   const fn = actions[decision.action as keyof typeof actions];
   if (fn) {
