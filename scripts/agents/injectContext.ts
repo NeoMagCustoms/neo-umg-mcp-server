@@ -1,21 +1,21 @@
 // File: scripts/agents/injectContext.ts
 
-import { loadVault } from '../loadVault';
+import { loadVault } from '../../utils/loadVault'; // ✅ Fixed import path
 
 export function injectContextPrompt(prompt: string): string {
   const vault = loadVault();
 
-  const overlayKey = vault.OverlayModules?.active;
-  const overlay = vault.OverlayModules?.[overlayKey];
+  const overlayKey = vault?.OverlayModules?.active;
+  const overlay = vault?.OverlayModules?.[overlayKey];
 
-  const instructionKey = vault.InstructionLayer?.active;
-  const instruction = vault.InstructionLayer?.[instructionKey];
+  const instructionKey = vault?.InstructionLayer?.active;
+  const instruction = vault?.InstructionLayer?.[instructionKey];
 
-  const philosophyKey = vault.PhilosophyStack?.active;
-  const philosophy = vault.PhilosophyStack?.[philosophyKey];
+  const philosophyKey = vault?.PhilosophyStack?.active;
+  const philosophy = vault?.PhilosophyStack?.[philosophyKey];
 
-  const alignment = vault.AlignmentBlock?.cantocore?.PHILOSOPHY || ['Unaligned'];
-  const mythos = vault.MythosBlock?.MYTHOS?.PURPOSE || 'No declared purpose';
+  const alignment = vault?.AlignmentBlock?.cantocore?.PHILOSOPHY ?? ['Unaligned'];
+  const mythos = vault?.MythosBlock?.MYTHOS?.PURPOSE ?? 'No declared purpose';
 
   return `
 🧠 UMG Agent Prompt — Injected Context

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { forgeAgent } from './forgeAgent';
-import { loadVault } from '../../utils/loadVault';
+import { loadVault } from '../../utils/loadVault'; // ✅ Unified path
 
 type AgentStep = {
   label: string;

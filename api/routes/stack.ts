@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { loadVault } from '../../utils/loadVault';
+import { loadVault } from '../../utils/loadVault'; // ✅ Updated path
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
   try {
     const vault = loadVault();
 
@@ -11,10 +11,10 @@ router.get('/', (req, res) => {
       PRIMARY: vault?.MetaMOLT?.cantocore?.PRIMARY || 'undefined',
       STACK_ORDER: ['AlignmentBlock', 'InstructionLayer', 'OverlayModules', 'MythosBlock'],
       BLOCKS: {
-        AlignmentBlock: vault.AlignmentBlock?.cantocore || null,
-        InstructionLayer: vault.InstructionLayer?.INSTRUCTIONS || null,
-        OverlayModules: vault.OverlayModules?.OVERLAYS || null,
-        MythosBlock: vault.MythosBlock?.MYTHOS || null
+        AlignmentBlock: vault?.AlignmentBlock?.cantocore ?? null,
+        InstructionLayer: vault?.InstructionLayer?.INSTRUCTIONS ?? null,
+        OverlayModules: vault?.OverlayModules?.OVERLAYS ?? null,
+        MythosBlock: vault?.MythosBlock?.MYTHOS ?? null
       }
     };
 

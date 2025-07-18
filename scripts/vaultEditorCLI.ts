@@ -1,17 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import readline from 'readline';
+// import { loadVault } from '../../../utils/loadVault'; // ✅ Correct path from scripts/clis
+// FIX: Update the path below if the actual location is different, or create the file if missing.
+import { loadVault } from '../utils/loadVault';
 
-const vaultPath = path.join(__dirname, '..', 'vault', 'vault.json');
+const VAULT_DIR = path.join(__dirname, '..', '..', '..', 'vault');
 
-function loadVault() {
-  const raw = fs.readFileSync(vaultPath, 'utf-8');
-  return JSON.parse(raw);
-}
-
-function saveVault(data: any) {
-  fs.writeFileSync(vaultPath, JSON.stringify(data, null, 2));
-  console.log('✅ Vault updated.');
+function saveVaultBlock(name: string, data: any) {
+  const filename = `${name}.v1.json`;
+  const fullPath = path.join(VAULT_DIR, filename);
+  fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
+  console.log(`✅ ${filename} updated.`);
 }
 
 async function runCLI() {
@@ -39,8 +39,8 @@ async function runCLI() {
       if (answer.toLowerCase() === 'yes') {
         rl.question('Paste new JSON block: ', newData => {
           try {
-            vault[section] = JSON.parse(newData);
-            saveVault(vault);
+            const parsed = JSON.parse(newData);
+            saveVaultBlock(section, parsed);
           } catch (err) {
             console.error('❌ Invalid JSON.');
           }
@@ -55,3 +55,4 @@ async function runCLI() {
 }
 
 runCLI();
+

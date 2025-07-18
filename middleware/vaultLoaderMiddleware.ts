@@ -1,24 +1,9 @@
-// middleware/vaultLoaderMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
-import fs from 'fs';
-import path from 'path';
+import { loadVault } from '../utils/loadVault'; // ✅ Unified loader
 
-function loadVaultMiddleware(req: Request, res: Response, next: NextFunction) {
+export function vaultLoaderMiddleware(req: Request, res: Response, next: NextFunction) {
   try {
-    const vaultPath = path.join(__dirname, '../vault');
-    const files = fs.readdirSync(vaultPath);
-    const vault: Record<string, any> = {};
-
-    for (const file of files) {
-      if (file.endsWith('.json')) {
-        const raw = fs.readFileSync(path.join(vaultPath, file), 'utf-8');
-        vault[file.replace('.v1.json', '').replace('.json', '')] = JSON.parse(raw);
-      }
-    }
-
-    // ✅ Patched: Safe cast to resolve TS2339
-    (req as any).vault = vault;
-
+    (req as any).vault = loadVault();
     next();
   } catch (error) {
     console.error('❌ Failed to load vault:', error);
@@ -26,5 +11,3 @@ function loadVaultMiddleware(req: Request, res: Response, next: NextFunction) {
   }
 }
 
-// ✅ Export with the correct name for consistency
-export const vaultLoaderMiddleware = loadVaultMiddleware;
