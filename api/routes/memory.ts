@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loadVault } from '../../scripts/vaultLoader';
+import { loadVault } from '../../utils/loadVault';
 
 const router = Router();
 
