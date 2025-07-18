@@ -25,7 +25,7 @@
     "status": "ts-node -r dotenv/config scripts/clis/statusCLI.ts",
     "swap": "ts-node -r dotenv/config scripts/clis/swapCLI.ts",
     "test-server": "ts-node -r dotenv/config test-server.ts",
-    "talk": "ts-node -r dotenv/config scripts/agents/poeRouterCLI.ts",
+    "talk": "ts-node scripts/talk.ts",
     "reflect-agent": "ts-node -r dotenv/config scripts/agents/agentReflector.ts",
     "reflect-repo": "ts-node -r dotenv/config scripts/agents/repoReflectorAgent.ts",
     "tools": "ts-node -r dotenv/config scripts/agents/toolRegistryCLI.ts",
