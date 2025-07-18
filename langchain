@@ -1,0 +1,31 @@
+[35mREADME.md[m[36m:[m- Powered by [1;31mLangChain[m + GPT-4 via `forgeAgent.ts` and `runOrchestrator.ts`
+[35mREADME.md[m[36m:[m| AI/LLM       | GPT-4 via [1;31mLangChain[m      |
+[35mREADME.md[m[36m:[m| Prompt Infra | [1;31mLangChain[m + HumanMessage |
+[35mREADME.md[m[36m:[m&nbsp;[1;31mLangChain[m plugin mode
+[35mopenapi.yaml[m[36m:[m  description: A modular GPT plugin that uses UMG blocks, [1;31mLangChain[m agents, and vault overlays to scaffold tools and run recursive plans.
+[35mpackage-lock.json[m[36m:[m        "[1;31mlangchain[m": "^0.1.16",
+[35mpackage-lock.json[m[36m:[m    "node_modules/@[1;31mlangchain[m/community": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/@[1;31mlangchain[m/community/-/community-0.0.57.tgz",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/core": "~0.1.60",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/openai": "~0.0.28",
+[35mpackage-lock.json[m[36m:[m    "node_modules/@[1;31mlangchain[m/core": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/@[1;31mlangchain[m/core/-/core-0.1.63.tgz",
+[35mpackage-lock.json[m[36m:[m    "node_modules/@[1;31mlangchain[m/openai": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/@[1;31mlangchain[m/openai/-/openai-0.0.34.tgz",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/core": ">0.1.56 <0.3.0",
+[35mpackage-lock.json[m[36m:[m    "node_modules/@[1;31mlangchain[m/textsplitters": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/@[1;31mlangchain[m/textsplitters/-/textsplitters-0.0.3.tgz",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/core": ">0.2.0 <0.3.0",
+[35mpackage-lock.json[m[36m:[m    "node_modules/@[1;31mlangchain[m/textsplitters/node_modules/@[1;31mlangchain[m/core": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/@[1;31mlangchain[m/core/-/core-0.2.36.tgz",
+[35mpackage-lock.json[m[36m:[m    "node_modules/@[1;31mlangchain[m/textsplitters/node_modules/uuid": {
+[35mpackage-lock.json[m[36m:[m    "node_modules/[1;31mlangchain[m": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/[1;31mlangchain[m/-/[1;31mlangchain[m-0.1.37.tgz",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/community": "~0.0.47",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/core": "~0.1.60",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/openai": "~0.0.28",
+[35mpackage-lock.json[m[36m:[m        "@[1;31mlangchain[m/textsplitters": "~0.0.0",
+[35mpackage-lock.json[m[36m:[m        "[1;31mlangchain[mhub": "~0.0.8",
+[35mpackage-lock.json[m[36m:[m    "node_modules/[1;31mlangchain[mhub": {
+[35mpackage-lock.json[m[36m:[m      "resolved": "https://registry.npmjs.org/[1;31mlangchain[mhub/-/[1;31mlangchain[mhub-0.0.11.tgz",
+[35mpackage.json[m[36m:[m    "[1;31mlangchain[m": "^0.1.16",

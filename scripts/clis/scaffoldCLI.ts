@@ -2,8 +2,8 @@
 import axios from 'axios';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
-import dotenv from 'dotenv';
-dotenv.config();
+
+
 
 const API_URL = 'http://localhost:3000/scaffold';
 

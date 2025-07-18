@@ -1,7 +1,7 @@
 // scripts/poeRuntimeAgent.ts
 
-import dotenv from 'dotenv';
-dotenv.config();
+
+
 
 import inquirer from 'inquirer';
 import fs from 'fs';

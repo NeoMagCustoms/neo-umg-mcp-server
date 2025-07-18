@@ -1,6 +1,6 @@
 // api/server.ts
 import express from 'express';
-import dotenv from 'dotenv';
+
 import cors from 'cors';
 import path from 'path';
 
@@ -8,7 +8,7 @@ import sseRoute from './routes/sse';   // Plugin manifest/static
 import mcpRoute from './routes/mcp';   // Custom MCP plugin endpoint
 import scaffoldRoute from './routes/scaffold'; // ✅ REAL /scaffold route
 
-dotenv.config();
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;

@@ -1,11 +1,11 @@
 // File: scripts/assistants/NeoPoeUMG.ts
 
 import OpenAI from 'openai';
-import dotenv from 'dotenv';
+
 import { getThreadId, saveThreadId } from '../../utils/threadStore';
 import { formatContextSummary } from '../../utils/contextFormatter';
 
-dotenv.config();
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!
