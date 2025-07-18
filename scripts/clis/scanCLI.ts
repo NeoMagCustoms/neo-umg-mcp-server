@@ -1,11 +1,12 @@
-import { execSync } from 'child_process';
-import path from 'path';
+import { scanRepo } from '../agents/repoScanner';
 
-const scannerPath = path.join(__dirname, '..', 'agents', 'repoScanner.ts');
-
-console.log('🧠 Launching repo scanner...');
-try {
-  execSync(`npx ts-node ${scannerPath}`, { stdio: 'inherit' });
-} catch (err) {
-  console.error('❌ Scanner failed:', err.message);
-}
+/**
+ * CLI wrapper for the repository scanner.  Invokes the scanner and
+ * reports summary statistics to stdout.  This script can be wired
+ * into an npm script (`npm run scan`) to update RepoIndex.v1.json.
+ */
+(async () => {
+  console.log('🔍 Running repository scan...');
+  const index = await scanRepo();
+  console.log(`✅ Indexed ${index.total} files and updated vault/RepoIndex.v1.json`);
+})();
