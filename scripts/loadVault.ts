@@ -23,4 +23,3 @@ export function loadVault(): Record<string, any> {
 
   return vault;
 }
-

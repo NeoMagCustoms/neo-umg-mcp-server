@@ -1,4 +1,7 @@
-// scripts/talk.ts
+// File: scripts/talk.ts
+
+import dotenv from "dotenv";
+dotenv.config();
 
 import inquirer from "inquirer";
 import { fork } from "child_process";
@@ -25,7 +28,8 @@ import { v4 as uuid } from "uuid";
   fork(target, [], {
     env: {
       ...process.env,
-      SESSION_ID: uuid()
+      SESSION_ID: uuid(),
+      OPENAI_API_KEY: process.env.OPENAI_API_KEY || ""
     },
     stdio: "inherit"
   });

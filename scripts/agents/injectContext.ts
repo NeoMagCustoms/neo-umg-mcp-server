@@ -1,4 +1,6 @@
-import { loadVault } from '../../vault/vaultLoader';
+// File: scripts/agents/injectContext.ts
+
+import { loadVault } from '../loadVault';
 
 export function injectContextPrompt(prompt: string): string {
   const vault = loadVault();

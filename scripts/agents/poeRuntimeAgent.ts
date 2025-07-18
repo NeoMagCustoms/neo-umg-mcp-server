@@ -1,4 +1,7 @@
-// scripts/poeRuntimeAgent.ts
+// File: scripts/poeRuntimeAgent.ts
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 import inquirer from 'inquirer';
 import fs from 'fs';
@@ -16,8 +19,8 @@ const actions = {
   scaffold: () => execSync('npm run scaffold', { stdio: 'inherit' }),
   reflect: () => execSync('npm run reflect-agent', { stdio: 'inherit' }),
   clean: () => execSync('npm run clean-code', { stdio: 'inherit' }),
-  push: () => execSync('npm run push-poe', { stdio: 'inherit' }),
-  organize: () => execSync('ts-node scripts/repoOrganizerAgent.ts', { stdio: 'inherit' })
+  push: () => console.log('🛑 push-poe disabled temporarily to prevent loop'),
+  organize: () => console.log('🛑 organize disabled temporarily to prevent loop')
 };
 
 async function decideAction(goal: string): Promise<{
@@ -48,10 +51,16 @@ Prefer tools when possible, but use "chat" if the request is exploratory or does
     ]
   });
 
+  const raw = chat.choices[0].message.content || '';
+  console.log('\n🧪 Raw GPT Response:\n', raw, '\n');
+
   try {
-    return JSON.parse(chat.choices[0].message.content || '');
-  } catch {
-    return { action: 'reflect' };
+    const parsed = JSON.parse(raw);
+    if (!parsed.action) throw new Error('No action found in GPT response.');
+    return parsed;
+  } catch (err) {
+    console.warn('⚠️ Failed to parse GPT response. Falling back to chat.');
+    return { action: 'chat', content: 'Sorry, I could not understand that request.' };
   }
 }
 

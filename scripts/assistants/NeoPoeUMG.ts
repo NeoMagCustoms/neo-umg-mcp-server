@@ -1,14 +1,14 @@
 // File: scripts/assistants/NeoPoeUMG.ts
 
-import OpenAI from 'openai';
+import dotenv from 'dotenv';
+dotenv.config();
 
+import OpenAI from 'openai';
 import { getThreadId, saveThreadId } from '../../utils/threadStore';
 import { formatContextSummary } from '../../utils/contextFormatter';
 
-
-
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!
+  apiKey: process.env.OPENAI_API_KEY || '',
 });
 
 const assistantId = 'asst_9Mg4r5s7T3VDyPKyBvrEHVQp';
@@ -20,7 +20,6 @@ export async function runNeoPoeUMGThread(
   try {
     let threadId = getThreadId();
 
-    // Create a new thread if none exists
     if (!threadId) {
       const thread = await openai.beta.threads.create();
       threadId = thread.id;
@@ -34,7 +33,6 @@ Honor recursion: Understand → Reflect → Refine.
 ${formatContextSummary(context)}
 `.trim();
 
-    // Inject prompt and user message into thread
     await openai.beta.threads.messages.create(threadId, {
       role: 'user',
       content: [
@@ -47,12 +45,10 @@ ${formatContextSummary(context)}
       assistant_id: assistantId
     });
 
-    // ✅ FIXED: Correct usage of `retrieve(runId, { thread_id })`
     while (true) {
-      const result = await openai.beta.threads.runs.retrieve(
-        run.id,
-        { thread_id: threadId }
-      );
+      const result = await openai.beta.threads.runs.retrieve(run.id, {
+        thread_id: threadId
+      });
 
       if (result.status === 'completed') break;
       if (result.status === 'failed') throw new Error('Assistant run failed.');
