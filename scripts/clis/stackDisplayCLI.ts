@@ -1,4 +1,20 @@
-import { loadVault } from '../utils/loadVault';
+// File: scripts/clis/stackDisplayCLI.ts
+
+import fs from 'fs';
+import path from 'path';
+
+function loadVault(): any | null {
+  const vaultPath = path.resolve(__dirname, '..', '..', 'vault', 'vault.json');
+
+  try {
+    const raw = fs.readFileSync(vaultPath, 'utf-8');
+    const parsed = JSON.parse(raw);
+    return parsed;
+  } catch (err: any) {
+    console.error('❌ Failed to load vault:', err.message);
+    return null;
+  }
+}
 
 function printBlock(label: string, data: any) {
   console.log(`\n🔹 ${label}:`);
@@ -6,11 +22,11 @@ function printBlock(label: string, data: any) {
   console.log('');
 }
 
-async function main() {
+function main() {
   const vault = loadVault();
 
   if (!vault) {
-    console.error("❌ Vault not loaded.");
+    console.error('🚫 Vault is missing or invalid. Aborting.');
     return;
   }
 

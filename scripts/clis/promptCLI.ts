@@ -1,5 +1,7 @@
+// File: scripts/clis/promptCLI.ts
+
 import readline from 'readline';
-import fetch from 'node-fetch';
+import axios from 'axios';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -17,24 +19,27 @@ rl.on('line', async (line) => {
     return;
   }
 
-  const body = {
-    molt_type: "Instruction",
-    label: "forge_agent",
+  const block = {
+    molt_type: 'Instruction',
+    label: 'forge_agent',
+    label_to_create: 'prompt_tool',
     prompt: input
   };
 
   try {
-    const response = await fetch('http://localhost:3000/query', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+    const response = await axios.post('http://localhost:3000/query', block, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.API_KEY || ''
+      }
     });
 
-    const result = await response.json();
+    const result = response.data;
     console.log("🧱", result.message || result.result || result.error || result);
-  } catch (err) {
-    console.error("❌ Error talking to Forge:", err);
+  } catch (err: any) {
+    console.error("❌ PromptCLI Error:", err.message);
   }
 
   rl.prompt();
 });
+

@@ -1,4 +1,5 @@
 // scripts/poeRuntimeAgent.ts
+
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -6,10 +7,13 @@ import inquirer from 'inquirer';
 import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { HumanMessage, SystemMessage } from 'langchain/schema';
-import { injectContextPrompt } from './injectContext';
+import OpenAI from 'openai';
 import chalk from 'chalk';
+import { injectContextPrompt } from './injectContext';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!
+});
 
 const agentsPath = path.join(__dirname);
 
@@ -22,29 +26,28 @@ const actions = {
 };
 
 async function decideAction(goal: string): Promise<{ action: string; file?: string }> {
-  const llm = new ChatOpenAI({
-    modelName: 'gpt-4',
+  const prompt = injectContextPrompt(goal);
+
+  const chat = await openai.chat.completions.create({
+    model: 'gpt-4',
     temperature: 0.4,
-    openAIApiKey: process.env.OPENAI_API_KEY!
-  });
-
-  const injectedPrompt = injectContextPrompt(goal);
-
-  const messages = [
-    new SystemMessage(`You are Poe, an intelligent recursive agent controller.
+    messages: [
+      {
+        role: 'system',
+        content: `You are Poe, an intelligent recursive agent controller.
 You manage tools that can reflect on agents, scaffold new ones, clean code, push changes, or reorganize the system.
 Given a goal, reply in JSON ONLY:
 { "action": "scaffold" | "reflect" | "clean" | "push" | "organize", "file": "optional.ts" }
 
 Only choose one action. If you're unsure, prefer "reflect".
-Don't explain yourself.`),
-    new HumanMessage(injectedPrompt)
-  ];
-
-  const result = await llm.call(messages);
+Don't explain yourself.`
+      },
+      { role: 'user', content: prompt }
+    ]
+  });
 
   try {
-    return JSON.parse(result.text);
+    return JSON.parse(chat.choices[0].message.content || '');
   } catch {
     return { action: 'reflect' };
   }
@@ -64,11 +67,13 @@ async function main() {
   const decision = await decideAction(input);
   console.log(chalk.blue(`\n🧠 Poe decided: ${decision.action}${decision.file ? ' → ' + decision.file : ''}`));
 
-  if (actions[decision.action as keyof typeof actions]) {
-    actions[decision.action as keyof typeof actions]();
+  const fn = actions[decision.action as keyof typeof actions];
+  if (fn) {
+    fn();
   } else {
     console.log(chalk.red('❌ Unknown action. No tool executed.'));
   }
 }
 
 main();
+

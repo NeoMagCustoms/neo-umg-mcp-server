@@ -2,10 +2,10 @@ import { Router, Request, Response } from 'express';
 import { alignmentCheckMiddleware } from '../../middleware/alignmentCheckMiddleware';
 import { vaultLoaderMiddleware } from '../../middleware/vaultLoaderMiddleware';
 import { z } from 'zod';
-import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { HumanMessage } from 'langchain/schema';
+import OpenAI from 'openai';
 import { safeOutput } from '../../utils/safeOutput';
 
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 const router = Router();
 
 const umgBlockSchema = z.object({
@@ -15,12 +15,6 @@ const umgBlockSchema = z.object({
   description: z.string().optional(),
   prompt: z.string().optional(),
   repo: z.string().optional()
-});
-
-const llm = new ChatOpenAI({
-  openAIApiKey: process.env.OPENAI_API_KEY!,
-  temperature: 0.7,
-  modelName: 'gpt-4'
 });
 
 router.post(
@@ -61,10 +55,15 @@ router.post(
       }
 
       if (block.prompt) {
-        const result = await llm.call([new HumanMessage(block.prompt)]);
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4',
+          temperature: 0.7,
+          messages: [{ role: 'user', content: block.prompt }]
+        });
+
         return res.json(safeOutput({
           type: "gpt-response",
-          result: result.text,
+          result: completion.choices[0]?.message?.content,
           philosophy: vault?.AlignmentBlock?.cantocore?.PHILOSOPHY
         }));
       }
@@ -78,4 +77,5 @@ router.post(
 );
 
 export default router;
+
 

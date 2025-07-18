@@ -1,15 +1,14 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
-import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { HumanMessage } from 'langchain/schema';
-
+import OpenAI from 'openai';
 import { analyzeRepo } from '../../scripts/analyzeRepo';
-import { runPlan } from '../../scripts/agents/orchestratorCore'; // ✅ Corrected here
+import { runPlan } from '../../scripts/agents/orchestratorCore';
 import { alignmentCheckMiddleware } from '../../middleware/alignmentCheckMiddleware';
 import { vaultLoaderMiddleware } from '../../middleware/vaultLoaderMiddleware';
 
 const router = Router();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 const savePlan = (planName: string, data: any) => {
   const plansDir = path.join(__dirname, '..', '..', 'plans');
@@ -20,17 +19,15 @@ const savePlan = (planName: string, data: any) => {
 };
 
 const buildPlanFromGoal = async (goal: string) => {
-  const llm = new ChatOpenAI({
-    modelName: 'gpt-4',
+  const prompt = `Break down the following goal into modular agents with labels and prompts:\n\n${goal}`;
+  const result = await openai.chat.completions.create({
+    model: 'gpt-4',
     temperature: 0.4,
-    openAIApiKey: process.env.OPENAI_API_KEY!
+    messages: [{ role: 'user', content: prompt }]
   });
 
-  const prompt = `Break down the following goal into modular agents with labels and prompts:\n\n${goal}`;
-  const result = await llm.call([new HumanMessage(prompt)]);
-
   try {
-    const parsed = JSON.parse(result.text);
+    const parsed = JSON.parse(result.choices[0].message.content || '');
     if (!Array.isArray(parsed)) throw new Error("Parsed plan is not an array.");
     return parsed;
   } catch {
@@ -48,10 +45,9 @@ router.post(
   '/',
   alignmentCheckMiddleware,
   vaultLoaderMiddleware,
-  async (req, res) => {
+  async (req: Request & { vault?: any }, res: Response) => {
     const { goal, plan, analyzeRepo: doAnalyze, path: repoPath = './', mode = 'review' } = req.body;
-    const vault = (req as any).vault || {};
-
+    const vault = req.vault || {};
     let finalPlan = plan;
 
     try {
@@ -59,12 +55,10 @@ router.post(
         finalPlan = await buildPlanFromGoal(goal);
       } else if (doAnalyze) {
         const analysis = await analyzeRepo(repoPath);
-        finalPlan = [
-          {
-            label: 'repoFixAgent',
-            prompt: `Create a tool that fixes these issues:\n\n${JSON.stringify(analysis, null, 2)}`
-          }
-        ];
+        finalPlan = [{
+          label: 'repoFixAgent',
+          prompt: `Create a tool that fixes these issues:\n\n${JSON.stringify(analysis, null, 2)}`
+        }];
       }
 
       if (!finalPlan || !Array.isArray(finalPlan)) {
@@ -87,7 +81,6 @@ router.post(
         philosophy: vault?.AlignmentBlock?.cantocore?.PHILOSOPHY || [],
         status: '✅ Plan saved. Use `npm run orchestrate` to execute.'
       });
-
     } catch (err: any) {
       console.error("❌ Scaffold Error:", err.message);
       res.status(500).json({ error: err.message || 'Internal Server Error' });
@@ -96,4 +89,6 @@ router.post(
 );
 
 export default router;
+
+
 

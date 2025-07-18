@@ -1,4 +1,4 @@
-// File: scripts/agents/NeoPoeUMG.ts
+// File: scripts/assistants/NeoPoeUMG.ts
 
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
@@ -16,7 +16,7 @@ const assistantId = 'asst_9Mg4r5s7T3VDyPKyBvrEHVQp';
 export async function runNeoPoeUMGThread(
   userInput: string,
   context: Record<string, any> = {}
-) {
+): Promise<string | void> {
   try {
     let threadId = getThreadId();
 
@@ -27,16 +27,14 @@ export async function runNeoPoeUMGThread(
       saveThreadId(threadId);
     }
 
-    // Build a system prompt from context
-    const summary = formatContextSummary(context);
     const systemPrompt = `
 You are NeoPoeUMG — recursive alignment assistant.
 Honor recursion: Understand → Reflect → Refine.
 
-${summary}
+${formatContextSummary(context)}
 `.trim();
 
-    // Send system prompt + user input
+    // Inject prompt and user message into thread
     await openai.beta.threads.messages.create(threadId, {
       role: 'user',
       content: [
@@ -45,36 +43,34 @@ ${summary}
       ]
     });
 
-    // Run the assistant
     const run = await openai.beta.threads.runs.create(threadId, {
       assistant_id: assistantId
     });
 
-    // Poll until completion
+    // ✅ FIXED: Correct usage of `retrieve(runId, { thread_id })`
     while (true) {
-      const result = await openai.beta.threads.runs.retrieve({
-        thread_id: threadId,
-        run_id: run.id
-      });
+      const result = await openai.beta.threads.runs.retrieve(
+        run.id,
+        { thread_id: threadId }
+      );
+
       if (result.status === 'completed') break;
       if (result.status === 'failed') throw new Error('Assistant run failed.');
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Fetch and return the assistant’s response
     const messages = await openai.beta.threads.messages.list(threadId);
-    const response = messages.data.find(msg => msg.role === 'assistant');
-    const textBlock = response?.content?.find(c => c.type === 'text');
-    const text =
-      textBlock && 'text' in textBlock
-        ? (textBlock as any).text.value
-        : 'No response.';
+    const assistantMessage = messages.data.find(msg => msg.role === 'assistant');
+
+    const textBlock = assistantMessage?.content?.find(c => c.type === 'text');
+    const text = (textBlock as any)?.text?.value ?? 'No response.';
 
     console.log('\n🧠 NeoPoeUMG says:\n');
     console.log(text);
-    return text;
 
+    return text;
   } catch (err: any) {
     console.error('❌ Error in NeoPoeUMG thread:', err.message || err);
   }
 }
+
