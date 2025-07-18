@@ -26,6 +26,7 @@
     "swap": "ts-node -r dotenv/config scripts/clis/swapCLI.ts",
     "test-server": "ts-node -r dotenv/config test-server.ts",
     "talk": "ts-node scripts/talk.ts",
+    "describe": "ts-node scripts/clis/describeCLI.ts",
     "reflect-agent": "ts-node -r dotenv/config scripts/agents/agentReflector.ts",
     "reflect-repo": "ts-node -r dotenv/config scripts/agents/repoReflectorAgent.ts",
     "tools": "ts-node -r dotenv/config scripts/agents/toolRegistryCLI.ts",
@@ -33,7 +34,8 @@
     "neo": "ts-node -r dotenv/config scripts/clis/neoCLI.ts",
     "talk-neopoe": "ts-node -r dotenv/config scripts/assistants/talkNeoPoe.ts",
     "poe-assistant": "ts-node -r dotenv/config scripts/assistants/NeoPoeUMG.ts"
-  },
+  }
+,
   "dependencies": {
     "axios": "^1.10.0",
     "chalk": "^4.1.2",
